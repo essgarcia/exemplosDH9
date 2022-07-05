@@ -1,7 +1,9 @@
 package com.example.exemplo.controller;
 
+import com.example.exemplo.dto.VeiculoDTO;
 import com.example.exemplo.model.Veiculo;
 import com.example.exemplo.repository.VeiculoRepository;
+import com.example.exemplo.service.VeiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,28 +13,41 @@ import java.util.List;
 @RestController
 @RequestMapping("/veiculo")
 public class VeiculoController {
-    @Autowired
-    private VeiculoRepository veiculoRepository;
+
+    private VeiculoService veiculoService;
 
     @GetMapping("/{placa}")
-    public ResponseEntity<Veiculo> getVeiculoResponseEntity(@PathVariable String placa){
-        Veiculo v = veiculoRepository.getVeiculo(placa);
+    public ResponseEntity<VeiculoDTO> getVeiculoResponseEntity(@PathVariable String placa){
+            return ResponseEntity.ok().body(veiculoService.getVeiculo(placa));
+    }
 
-        if (v != null){
-            return ResponseEntity.ok(v);
-        }
-        return ResponseEntity.notFound().build();
+    @GetMapping("/allorder")
+    public ResponseEntity<List<VeiculoDTO>> getAllOrderByValor(){
+        List<VeiculoDTO> v = veiculoService.getAllOrderByValor();
+        return ResponseEntity.ok(v);
+    }
+
+    @GetMapping("/bymodel/{modelo}")
+    public ResponseEntity<List<VeiculoDTO>> getAllByModel(@PathVariable String modelo){
+        List<VeiculoDTO> v = veiculoService.getByModel(modelo);
+        return ResponseEntity.ok(v);
+    }
+
+    @GetMapping("/allbymodel")
+    public ResponseEntity<List<VeiculoDTO>> getAllOrderByModel(){
+        List<VeiculoDTO> v = veiculoService.getAllOrderByModel();
+        return ResponseEntity.ok(v);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Veiculo>> getAllVeiculos(){
-        List<Veiculo> v = veiculoRepository.getAllVeiculos();
+    public ResponseEntity<List<VeiculoDTO>> getAllVeiculos(){
+        List<VeiculoDTO> v = veiculoService.getAllVeiculos();
         return ResponseEntity.ok(v);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public void saveVeiculo(@RequestBody Veiculo novoVeiculo){
-        veiculoRepository.saveVeiculo(novoVeiculo);
+        veiculoService.saveVeiculo(novoVeiculo);
     }
 }
