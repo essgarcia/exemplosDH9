@@ -1,5 +1,6 @@
 package com.example.exemplo.repository;
 
+import com.example.exemplo.exception.NotFoundException;
 import com.example.exemplo.model.Veiculo;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +14,7 @@ import java.util.List;
 @Repository
 public class VeiculoRepository {
 
-    private final String linkFile = "src/main/resource/dados.json";
+    private final String linkFile = "src/main/resources/dados.json";
 
     public Veiculo getVeiculo(String placa) {
         ObjectMapper map = new ObjectMapper();
@@ -22,15 +23,17 @@ public class VeiculoRepository {
             lista = Arrays.asList
                     (map.readValue(new File(linkFile), Veiculo[].class));
 
-            for (Veiculo v : lista){
-                if (v.getPlaca().equals(placa)){
-                    return v;
-                }
-            }
         } catch (Exception ex) {
 
         }
-        return null;
+
+        for (Veiculo v : lista){
+            if (v.getPlaca().equals(placa)){
+                return v;
+            }
+        }
+        throw new NotFoundException("Veiculo não encontrado.");
+
     }
 
     public List<Veiculo> getAllVeiculos() {
